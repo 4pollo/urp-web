@@ -75,7 +75,7 @@ export default function AdminPage() {
       <AppShell navItems={[]}>
         <ActionState
           label="当前账号没有管理权限"
-          detail="系统将返回用户面板。"
+          detail="系统将返回控制台。"
           actionLabel="返回登录"
           onAction={() => {
             destroySession();

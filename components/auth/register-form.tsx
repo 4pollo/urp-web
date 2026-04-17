@@ -88,6 +88,7 @@ export function RegisterForm() {
               <button
                 className="inline-flex h-8 w-8 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 type="button"
+                tabIndex={-1}
                 aria-label={showPassword ? '隐藏密码' : '显示密码'}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => setShowPassword((value) => !value)}
@@ -113,6 +114,7 @@ export function RegisterForm() {
               <button
                 className="inline-flex h-8 w-8 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 type="button"
+                tabIndex={-1}
                 aria-label={showConfirmPassword ? '隐藏密码' : '显示密码'}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => setShowConfirmPassword((value) => !value)}

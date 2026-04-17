@@ -20,7 +20,7 @@ export default function RegisterPage() {
   return (
     <AuthShell title="注册" subtitle="创建新账号">
       {authenticated ? (
-        <LoadingState label="正在跳转到用户面板..." />
+        <LoadingState label="正在跳转到控制台..." />
       ) : (
         <RegisterForm />
       )}

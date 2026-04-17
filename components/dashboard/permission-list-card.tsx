@@ -6,7 +6,10 @@ export function PermissionListCard({ permissions }: { permissions: string[] }) {
   return (
     <Card>
       <CardHeader className="border-b border-border">
-        <CardTitle>我的权限</CardTitle>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle>我的权限</CardTitle>
+          <Badge variant="outline">{permissions.length} 项权限</Badge>
+        </div>
       </CardHeader>
       <CardContent>
         {permissions.length === 0 ? (

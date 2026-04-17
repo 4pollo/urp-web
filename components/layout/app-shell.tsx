@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import {
+  CircleUser,
   Gauge,
   KeyRound,
+  LogOut,
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
@@ -24,8 +26,9 @@ import {
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { ConfirmDialog } from '@/components/admin/confirm-dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { destroySession } from '@/lib/session';
+import { logout } from '@/lib/auth';
 import type { AuthNavItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { GlobalSearch, type SearchItem } from '@/components/common/global-search';
@@ -46,6 +49,8 @@ export function AppShell({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [logoutPending, setLogoutPending] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -74,6 +79,18 @@ export function AppShell({
     '/admin/roles': <Shield className="h-4 w-4 shrink-0" />,
     '/admin/permissions': <KeyRound className="h-4 w-4 shrink-0" />,
   };
+
+  async function handleLogout() {
+    setLogoutPending(true);
+
+    try {
+      await logout();
+    } finally {
+      setLogoutPending(false);
+      setLogoutDialogOpen(false);
+      router.replace('/login');
+    }
+  }
 
   function renderNavItems(collapsed = false, closeOnNavigate = false) {
     return navItems.map((item) => {
@@ -233,12 +250,23 @@ export function AppShell({
                 </Button>
                 <Button
                   variant="outline"
+                  size="icon"
+                  aria-label="进入用户中心"
                   onClick={() => {
-                    destroySession();
-                    router.replace('/login');
+                    router.push('/user');
                   }}
                 >
-                  退出登录
+                  <CircleUser className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="default"
+                  size="icon"
+                  aria-label="退出登录"
+                  onClick={() => {
+                    setLogoutDialogOpen(true);
+                  }}
+                >
+                  <LogOut className="h-4 w-4" />
                 </Button>
               </div>
             </>
@@ -262,12 +290,23 @@ export function AppShell({
               </Button>
               <Button
                 variant="outline"
+                size="icon"
+                aria-label="进入用户中心"
                 onClick={() => {
-                  destroySession();
-                  router.replace('/login');
+                  router.push('/user');
                 }}
               >
-                退出登录
+                <CircleUser className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="default"
+                size="icon"
+                aria-label="退出登录"
+                onClick={() => {
+                  setLogoutDialogOpen(true);
+                }}
+              >
+                <LogOut className="h-4 w-4" />
               </Button>
             </div>
           )}
@@ -276,6 +315,17 @@ export function AppShell({
           <div className="px-6 py-8 lg:px-8 lg:py-10">{children}</div>
         </main>
       </div>
+      <ConfirmDialog
+        open={logoutDialogOpen}
+        title="确认退出登录"
+        description="退出后将结束当前会话，并返回登录页。"
+        confirmLabel="退出登录"
+        pending={logoutPending}
+        onOpenChange={setLogoutDialogOpen}
+        onConfirm={() => {
+          void handleLogout();
+        }}
+      />
       {onSearch && (
         <GlobalSearch
           onSearch={onSearch}

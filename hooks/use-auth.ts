@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { login, register } from '@/lib/auth';
+import { login, logout as logoutRequest, register } from '@/lib/auth';
 import {
   destroySession,
   getInitialUser,
@@ -65,8 +65,8 @@ export function useAuth() {
     [],
   );
 
-  const logout = useCallback(() => {
-    destroySession();
+  const logout = useCallback(async () => {
+    await logoutRequest();
     setUser(null);
     setIsAuthenticated(false);
   }, []);

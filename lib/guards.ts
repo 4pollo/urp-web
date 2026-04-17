@@ -2,7 +2,7 @@ import type { AdminSection, AuthNavItem } from './types';
 
 export const dashboardNavItem: AuthNavItem = {
   href: '/dashboard',
-  label: '用户面板',
+  label: '控制台',
 };
 
 export const adminSections: AdminSection[] = [

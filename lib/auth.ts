@@ -1,5 +1,5 @@
 import { authRequest, apiRequest } from './fetcher';
-import { clearSession } from './storage';
+import { clearSession, getRefreshToken } from './storage';
 import type { AuthPayload, AuthUser, MyPermissions } from './types';
 
 export function login(email: string, password: string): Promise<AuthPayload> {
@@ -23,8 +23,17 @@ export async function getMyPermissions() {
   return result.data;
 }
 
-export function logout() {
-  clearSession();
+export async function logout() {
+  const refreshToken = getRefreshToken();
+
+  try {
+    await apiRequest<{ message: string }>('/api/auth/logout', {
+      method: 'POST',
+      body: refreshToken ? JSON.stringify({ refreshToken }) : undefined,
+    });
+  } finally {
+    clearSession();
+  }
 }
 
 export async function changePassword(oldPassword: string, newPassword: string) {
