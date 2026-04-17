@@ -3,20 +3,20 @@
 import { ShieldCheck } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertMessage } from '../../components/common/alert-message';
+import { AlertMessage } from '@/components/common/alert-message';
 import {
   ActionState,
   LoadingState,
-} from '../../components/common/loading-state';
-import { PermissionListCard } from '../../components/dashboard/permission-list-card';
-import { RoleListCard } from '../../components/dashboard/role-list-card';
-import { UserSummaryCard } from '../../components/dashboard/user-summary-card';
-import { AppShell } from '../../components/layout/app-shell';
-import { Badge } from '../../components/ui/badge';
-import { useCurrentUser } from '../../hooks/use-current-user';
-import { useMyPermissions } from '../../hooks/use-my-permissions';
-import { getAuthenticatedNavItems } from '../../lib/guards';
-import { destroySession, hasSession } from '../../lib/session';
+} from '@/components/common/loading-state';
+import { PermissionListCard } from '@/components/dashboard/permission-list-card';
+import { RoleListCard } from '@/components/dashboard/role-list-card';
+import { UserSummaryCard } from '@/components/dashboard/user-summary-card';
+import { AppShell } from '@/components/layout/app-shell';
+import { Badge } from '@/components/ui/badge';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMyPermissions } from '@/hooks/use-my-permissions';
+import { getAuthenticatedNavItems } from '@/lib/guards';
+import { destroySession, hasSession } from '@/lib/session';
 
 export default function DashboardPage() {
   const router = useRouter();

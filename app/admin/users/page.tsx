@@ -4,26 +4,26 @@ import { ShieldCheck } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { AlertMessage } from '../../../components/common/alert-message';
-import { EmptyState } from '../../../components/common/empty-state';
+import { AdminStats } from '@/components/admin/admin-stats';
+import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { UsersTable } from '@/components/admin/users-table';
+import { AlertMessage } from '@/components/common/alert-message';
+import { EmptyState } from '@/components/common/empty-state';
 import {
   ActionState,
   LoadingState,
-} from '../../../components/common/loading-state';
-import { AdminStats } from '../../../components/admin/admin-stats';
-import { ConfirmDialog } from '../../../components/admin/confirm-dialog';
-import { UsersTable } from '../../../components/admin/users-table';
-import { AppShell } from '../../../components/layout/app-shell';
-import { Badge } from '../../../components/ui/badge';
-import { useAdminData } from '../../../hooks/use-admin-data';
-import { useMyPermissions } from '../../../hooks/use-my-permissions';
-import { apiRequest } from '../../../lib/fetcher';
+} from '@/components/common/loading-state';
+import { AppShell } from '@/components/layout/app-shell';
+import { Badge } from '@/components/ui/badge';
+import { useAdminData } from '@/hooks/use-admin-data';
+import { useMyPermissions } from '@/hooks/use-my-permissions';
+import { apiRequest } from '@/lib/fetcher';
 import {
   getAccessibleAdminSections,
   getAuthenticatedNavItems,
-} from '../../../lib/guards';
-import { destroySession, hasSession } from '../../../lib/session';
-import type { UserListItem } from '../../../lib/types';
+} from '@/lib/guards';
+import { destroySession, hasSession } from '@/lib/session';
+import type { UserListItem } from '@/lib/types';
 
 export default function AdminUsersPage() {
   const router = useRouter();

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { getMyPermissions } from '../lib/auth';
+import { getMyPermissions } from '@/lib/auth';
 
 export function useMyPermissions(enabled = true) {
   const [roles, setRoles] = useState<string[]>([]);

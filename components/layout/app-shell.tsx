@@ -16,11 +16,11 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, type ReactNode } from 'react';
 
 const SIDEBAR_COLLAPSED_STORAGE_KEY = 'app-shell:sidebar-collapsed';
-import type { AuthNavItem } from '../../lib/types';
-import { Button } from '../ui/button';
-import { cn } from '../../lib/utils';
-import { destroySession } from '../../lib/session';
-import { ScrollArea } from '../ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { destroySession } from '@/lib/session';
+import type { AuthNavItem } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 export function AppShell({
   children,

@@ -1,14 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { login, register } from '../lib/auth';
+import { login, register } from '@/lib/auth';
 import {
   destroySession,
   getInitialUser,
   hasSession,
   hydrateSession,
-} from '../lib/session';
-import type { AuthUser } from '../lib/types';
+} from '@/lib/session';
+import type { AuthUser } from '@/lib/types';
 
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(getInitialUser());

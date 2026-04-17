@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { RegisterForm } from '../../components/auth/register-form';
-import { AuthShell } from '../../components/layout/auth-shell';
-import { LoadingState } from '../../components/common/loading-state';
-import { hasSession } from '../../lib/session';
+import { LoadingState } from '@/components/common/loading-state';
+import { RegisterForm } from '@/components/auth/register-form';
+import { AuthShell } from '@/components/layout/auth-shell';
+import { hasSession } from '@/lib/session';
 
 export default function RegisterPage() {
   const router = useRouter();

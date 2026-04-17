@@ -4,27 +4,27 @@ import { Plus } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { AlertMessage } from '../../../components/common/alert-message';
-import { EmptyState } from '../../../components/common/empty-state';
+import { AdminStats } from '@/components/admin/admin-stats';
+import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { PermissionEditDialog } from '@/components/admin/permission-edit-dialog';
+import { PermissionsTable } from '@/components/admin/permissions-table';
+import { AlertMessage } from '@/components/common/alert-message';
+import { EmptyState } from '@/components/common/empty-state';
 import {
   ActionState,
   LoadingState,
-} from '../../../components/common/loading-state';
-import { AdminStats } from '../../../components/admin/admin-stats';
-import { ConfirmDialog } from '../../../components/admin/confirm-dialog';
-import { PermissionEditDialog } from '../../../components/admin/permission-edit-dialog';
-import { PermissionsTable } from '../../../components/admin/permissions-table';
-import { AppShell } from '../../../components/layout/app-shell';
-import { Button } from '../../../components/ui/button';
-import { useAdminData } from '../../../hooks/use-admin-data';
-import { useMyPermissions } from '../../../hooks/use-my-permissions';
-import { apiRequest } from '../../../lib/fetcher';
+} from '@/components/common/loading-state';
+import { AppShell } from '@/components/layout/app-shell';
+import { Button } from '@/components/ui/button';
+import { useAdminData } from '@/hooks/use-admin-data';
+import { useMyPermissions } from '@/hooks/use-my-permissions';
+import { apiRequest } from '@/lib/fetcher';
 import {
   getAccessibleAdminSections,
   getAuthenticatedNavItems,
-} from '../../../lib/guards';
-import { destroySession, hasSession } from '../../../lib/session';
-import type { PermissionItem } from '../../../lib/types';
+} from '@/lib/guards';
+import { destroySession, hasSession } from '@/lib/session';
+import type { PermissionItem } from '@/lib/types';
 
 export default function AdminPermissionsPage() {
   const router = useRouter();

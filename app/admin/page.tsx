@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import {
   ActionState,
   LoadingState,
-} from '../../components/common/loading-state';
-import { AppShell } from '../../components/layout/app-shell';
-import { useMyPermissions } from '../../hooks/use-my-permissions';
-import { destroySession, hasSession } from '../../lib/session';
+} from '@/components/common/loading-state';
+import { AppShell } from '@/components/layout/app-shell';
+import { useMyPermissions } from '@/hooks/use-my-permissions';
 import {
   getAccessibleAdminSections,
   getAuthenticatedNavItems,
-} from '../../lib/guards';
+} from '@/lib/guards';
+import { destroySession, hasSession } from '@/lib/session';
 
 export default function AdminPage() {
   const router = useRouter();

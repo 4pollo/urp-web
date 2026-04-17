@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LoginForm } from '../../components/auth/login-form';
-import { AuthShell } from '../../components/layout/auth-shell';
-import { LoadingState } from '../../components/common/loading-state';
-import { hasSession } from '../../lib/session';
+import { LoadingState } from '@/components/common/loading-state';
+import { LoginForm } from '@/components/auth/login-form';
+import { AuthShell } from '@/components/layout/auth-shell';
+import { hasSession } from '@/lib/session';
 
 export default function LoginPage() {
   const router = useRouter();

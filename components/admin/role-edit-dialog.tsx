@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp, Minus } from 'lucide-react';
-import type { PermissionItem, RoleDetail, RoleListItem } from '../../lib/types';
+import type { PermissionItem, RoleDetail, RoleListItem } from '@/lib/types';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -316,14 +316,13 @@ export function RoleEditDialog({
                                           groupPermissionIds,
                                         );
                                       }}
-                                      aria-label={`${group}权限组全选切换`}
-                                      aria-checked={
+                                      aria-label={`${group}权限组全选切换：${
                                         allSelected
-                                          ? 'true'
+                                          ? '已全选'
                                           : partiallySelected
-                                            ? 'mixed'
-                                            : 'false'
-                                      }
+                                            ? '部分选中'
+                                            : '未选中'
+                                      }`}
                                     >
                                       {allSelected ? (
                                         <div className="h-2.5 w-2.5 bg-foreground" />

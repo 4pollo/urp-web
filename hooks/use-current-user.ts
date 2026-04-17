@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { getCurrentUser } from '../lib/auth';
-import type { AuthUser } from '../lib/types';
+import { getCurrentUser } from '@/lib/auth';
+import type { AuthUser } from '@/lib/types';
 
 export function useCurrentUser(enabled = true) {
   const [user, setUser] = useState<AuthUser | null>(null);

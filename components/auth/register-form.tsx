@@ -5,15 +5,15 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
-import { useAuth } from '../../hooks/use-auth';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from '../ui/input-group';
-import { Label } from '../ui/label';
+} from '@/components/ui/input-group';
+import { Label } from '@/components/ui/label';
+import { useAuth } from '@/hooks/use-auth';
 
 export function RegisterForm() {
   const router = useRouter();

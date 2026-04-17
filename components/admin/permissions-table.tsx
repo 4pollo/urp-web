@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
-import type { PermissionItem } from '../../lib/types';
+import type { PermissionItem } from '@/lib/types';
 
 export function PermissionsTable({
   permissions,

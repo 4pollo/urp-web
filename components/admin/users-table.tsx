@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
-import type { UserListItem } from '../../lib/types';
+import type { UserListItem } from '@/lib/types';
 
 export function UsersTable({
   users,

@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
-import type { RoleListItem } from '../../lib/types';
+import type { RoleListItem } from '@/lib/types';
 
 export function RolesTable({
   roles,

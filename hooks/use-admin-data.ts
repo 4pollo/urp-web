@@ -1,14 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { apiRequest } from '../lib/fetcher';
+import { apiRequest } from '@/lib/fetcher';
 import type {
   PermissionItem,
   PermissionListResponse,
   RoleListItem,
   RoleListResponse,
   UserListResponse,
-} from '../lib/types';
+} from '@/lib/types';
 
 function normalizeRolesResponse(
   data: RoleListResponse | RoleListItem[],
