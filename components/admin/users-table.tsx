@@ -28,6 +28,7 @@ export function UsersTable({
   pendingUserId,
   onPageChange,
   onToggleStatus,
+  onAssignRoles,
   onDelete,
 }: {
   users: UserListItem[];
@@ -37,6 +38,7 @@ export function UsersTable({
   pendingUserId?: number | null;
   onPageChange: (page: number) => void;
   onToggleStatus: (user: UserListItem) => void;
+  onAssignRoles: (user: UserListItem) => void;
   onDelete: (user: UserListItem) => void;
 }) {
   const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -117,6 +119,13 @@ export function UsersTable({
                           : user.status === 'active'
                             ? '冻结'
                             : '激活'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        disabled={pending}
+                        onClick={() => onAssignRoles(user)}
+                      >
+                        分配角色
                       </Button>
                       <Button
                         variant="danger"

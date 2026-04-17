@@ -52,6 +52,15 @@ export type UserListResponse = {
   limit: number;
 };
 
+export type UserDetail = {
+  id: number;
+  email: string;
+  status: string;
+  lastLoginAt: string | null;
+  createdAt: string;
+  roles: Array<{ id: number; name: string }>;
+};
+
 export type RoleListItem = {
   id: number;
   name: string;

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { AdminStats } from '@/components/admin/admin-stats';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { UserRolesDialog } from '@/components/admin/user-roles-dialog';
 import { UsersTable } from '@/components/admin/users-table';
 import { AlertMessage } from '@/components/common/alert-message';
 import { EmptyState } from '@/components/common/empty-state';
@@ -16,35 +17,44 @@ import {
 import { AppShell } from '@/components/layout/app-shell';
 import { Badge } from '@/components/ui/badge';
 import { useAdminData } from '@/hooks/use-admin-data';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMyPermissions } from '@/hooks/use-my-permissions';
 import { apiRequest } from '@/lib/fetcher';
 import {
   getAccessibleAdminSections,
   getAuthenticatedNavItems,
+  isSuperAdmin,
 } from '@/lib/guards';
 import { destroySession, hasSession } from '@/lib/session';
-import type { UserListItem } from '@/lib/types';
+import type { RoleListItem, UserDetail, UserListItem } from '@/lib/types';
 
 export default function AdminUsersPage() {
   const router = useRouter();
   const authenticated = hasSession();
   const {
-    roles,
+    roles: currentRoles,
     permissions,
     loading: permissionLoading,
     error: permissionError,
     reload: reloadPermissions,
   } = useMyPermissions(authenticated);
-  const adminItems = getAccessibleAdminSections(permissions, roles);
-  const navItems = getAuthenticatedNavItems(permissions, roles);
+  const adminItems = getAccessibleAdminSections(permissions, currentRoles);
+  const navItems = getAuthenticatedNavItems(permissions, currentRoles);
   const canAccess = adminItems.some((item) => item.href === '/admin/users');
-  const { users, loading, error, reload } = useAdminData(
+  const { user: currentUser } = useCurrentUser(authenticated);
+  const { users, roles: availableRoles, loading, error, reload } = useAdminData(
     authenticated && canAccess && !permissionLoading,
-    { users: true },
+    { users: true, roles: true },
   );
-  const [selectedUser, setSelectedUser] = useState<UserListItem | null>(null);
+  const [selectedDeleteUser, setSelectedDeleteUser] =
+    useState<UserListItem | null>(null);
+  const [selectedRoleUser, setSelectedRoleUser] = useState<UserListItem | null>(null);
+  const [selectedRoleUserDetail, setSelectedRoleUserDetail] =
+    useState<UserDetail | null>(null);
   const [pendingUserId, setPendingUserId] = useState<number | null>(null);
   const [deletePending, setDeletePending] = useState(false);
+  const [userDetailLoading, setUserDetailLoading] = useState(false);
+  const [userRolesSubmitPending, setUserRolesSubmitPending] = useState(false);
 
   useEffect(() => {
     if (!authenticated) {
@@ -102,20 +112,79 @@ export default function AdminUsersPage() {
     }
   }
 
+  async function handleUserRolesEdit(user: UserListItem) {
+    if (pendingUserId !== null || userDetailLoading || deletePending) {
+      return;
+    }
+
+    setPendingUserId(user.id);
+    setUserDetailLoading(true);
+    setSelectedRoleUser(user);
+    setSelectedRoleUserDetail(null);
+    try {
+      const result = await apiRequest<UserDetail>(`/api/users/${user.id}`);
+      setSelectedRoleUserDetail(result.data);
+    } catch (err) {
+      setSelectedRoleUser(null);
+      setSelectedRoleUserDetail(null);
+      toast.error(err instanceof Error ? err.message : '加载用户详情失败');
+    } finally {
+      setUserDetailLoading(false);
+      setPendingUserId(null);
+    }
+  }
+
+  async function handleUserRolesSubmit(roleIds: number[]) {
+    if (!selectedRoleUser || userRolesSubmitPending) {
+      return;
+    }
+
+    const superAdminRole = availableRoles?.items.find(
+      (role) => role.name === 'SuperAdmin',
+    );
+    const editingSelf = currentUser?.id === selectedRoleUser.id;
+    const currentUserIsSuperAdmin = isSuperAdmin(currentRoles);
+    const keepsSuperAdminRole =
+      !superAdminRole || roleIds.includes(superAdminRole.id);
+
+    if (editingSelf && currentUserIsSuperAdmin && !keepsSuperAdminRole) {
+      toast.error('超级管理员不能移除自己的超管角色');
+      return;
+    }
+
+    setUserRolesSubmitPending(true);
+    setPendingUserId(selectedRoleUser.id);
+    try {
+      await apiRequest(`/api/users/${selectedRoleUser.id}/roles`, {
+        method: 'PUT',
+        body: JSON.stringify({ roleIds }),
+      });
+      toast.success('用户角色更新成功');
+      setSelectedRoleUser(null);
+      setSelectedRoleUserDetail(null);
+      await reload(currentPage, currentLimit);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '更新失败');
+    } finally {
+      setUserRolesSubmitPending(false);
+      setPendingUserId(null);
+    }
+  }
+
   async function handleDeleteConfirmed() {
-    if (!selectedUser || deletePending) {
+    if (!selectedDeleteUser || deletePending) {
       return;
     }
 
     setDeletePending(true);
-    setPendingUserId(selectedUser.id);
+    setPendingUserId(selectedDeleteUser.id);
 
     try {
-      await apiRequest<{ message: string }>(`/api/users/${selectedUser.id}`, {
+      await apiRequest<{ message: string }>(`/api/users/${selectedDeleteUser.id}`, {
         method: 'DELETE',
       });
       toast.success('用户删除成功');
-      setSelectedUser(null);
+      setSelectedDeleteUser(null);
       await reload(currentPage, currentLimit);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : '删除失败');
@@ -223,11 +292,14 @@ export default function AdminUsersPage() {
             onToggleStatus={(user) => {
               void handleToggleUserStatus(user);
             }}
+            onAssignRoles={(user) => {
+              void handleUserRolesEdit(user);
+            }}
             onDelete={(user) => {
-              if (pendingUserId !== null) {
+              if (pendingUserId !== null || selectedRoleUser) {
                 return;
               }
-              setSelectedUser(user);
+              setSelectedDeleteUser(user);
             }}
           />
         ) : (
@@ -235,22 +307,42 @@ export default function AdminUsersPage() {
         )}
 
         <ConfirmDialog
-          open={Boolean(selectedUser)}
+          open={Boolean(selectedDeleteUser)}
           pending={deletePending}
           onOpenChange={(open) => {
             if (!open) {
-              setSelectedUser(null);
+              setSelectedDeleteUser(null);
             }
           }}
           title="确认操作"
           description={
-            selectedUser
-              ? `确定要删除用户 “${selectedUser.email}” 吗？此操作不可恢复。`
+            selectedDeleteUser
+              ? `确定要删除用户 “${selectedDeleteUser.email}” 吗？此操作不可恢复。`
               : '确定要继续吗？'
           }
           confirmLabel="确认"
           onConfirm={() => {
             void handleDeleteConfirmed();
+          }}
+        />
+
+        <UserRolesDialog
+          user={selectedRoleUser}
+          userDetail={selectedRoleUserDetail}
+          roles={(availableRoles?.items || []) as RoleListItem[]}
+          open={Boolean(selectedRoleUser)}
+          detailLoading={userDetailLoading}
+          pending={userRolesSubmitPending}
+          currentUserIsSuperAdmin={isSuperAdmin(currentRoles)}
+          editingSelf={currentUser?.id === selectedRoleUser?.id}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSelectedRoleUser(null);
+              setSelectedRoleUserDetail(null);
+            }
+          }}
+          onSubmit={(roleIds) => {
+            void handleUserRolesSubmit(roleIds);
           }}
         />
       </div>
