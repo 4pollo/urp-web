@@ -7,6 +7,7 @@ import {
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
+  Search,
   Shield,
   Sun,
   Users,
@@ -27,13 +28,16 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { destroySession } from '@/lib/session';
 import type { AuthNavItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { GlobalSearch, type SearchItem } from '@/components/common/global-search';
 
 export function AppShell({
   children,
   navItems = [],
+  onSearch,
 }: {
   children: ReactNode;
   navItems?: AuthNavItem[];
+  onSearch?: (query: string) => Promise<SearchItem[]> | SearchItem[];
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -41,6 +45,7 @@ export function AppShell({
   const [mounted, setMounted] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -181,7 +186,7 @@ export function AppShell({
         </DialogContent>
       </Dialog>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:h-screen">
-        <header className="flex h-[77px] shrink-0 items-center justify-between border-b border-border bg-background/95 px-6 py-5 backdrop-blur-sm lg:justify-end lg:px-8">
+        <header className="flex h-[77px] shrink-0 items-center justify-between border-b border-border bg-background/95 px-6 py-5 backdrop-blur-sm lg:px-8">
           <Button
             type="button"
             variant="outline"
@@ -194,38 +199,92 @@ export function AppShell({
           >
             <PanelLeftOpen className="h-4 w-4" />
           </Button>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label={
-                activeTheme === 'dark' ? '切换到浅色模式' : '切换到深色模式'
-              }
-              onClick={() => {
-                setTheme(activeTheme === 'dark' ? 'light' : 'dark');
-              }}
-            >
-              {activeTheme === 'dark' ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                destroySession();
-                router.replace('/login');
-              }}
-            >
-              退出登录
-            </Button>
-          </div>
+          {onSearch ? (
+            <>
+              <div className="hidden flex-1 justify-center lg:flex lg:px-8">
+                <Button
+                  variant="outline"
+                  className="w-full max-w-md justify-start text-muted-foreground"
+                  onClick={() => setSearchOpen(true)}
+                >
+                  <Search className="mr-2 h-4 w-4" />
+                  <span className="text-xs">搜索...</span>
+                  <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                    <span className="text-xs">⌘</span>K
+                  </kbd>
+                </Button>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label={
+                    activeTheme === 'dark' ? '切换到浅色模式' : '切换到深色模式'
+                  }
+                  onClick={() => {
+                    setTheme(activeTheme === 'dark' ? 'light' : 'dark');
+                  }}
+                >
+                  {activeTheme === 'dark' ? (
+                    <Sun className="h-4 w-4" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    destroySession();
+                    router.replace('/login');
+                  }}
+                >
+                  退出登录
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center gap-3 lg:ml-auto">
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label={
+                  activeTheme === 'dark' ? '切换到浅色模式' : '切换到深色模式'
+                }
+                onClick={() => {
+                  setTheme(activeTheme === 'dark' ? 'light' : 'dark');
+                }}
+              >
+                {activeTheme === 'dark' ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  destroySession();
+                  router.replace('/login');
+                }}
+              >
+                退出登录
+              </Button>
+            </div>
+          )}
         </header>
         <main className="min-h-0 flex-1 overflow-y-auto">
           <div className="px-6 py-8 lg:px-8 lg:py-10">{children}</div>
         </main>
       </div>
+      {onSearch && (
+        <GlobalSearch
+          onSearch={onSearch}
+          placeholder="请输入搜索内容... "
+          emptyText="未找到结果"
+          open={searchOpen}
+          onOpenChange={setSearchOpen}
+        />
+      )}
     </div>
   );
 }

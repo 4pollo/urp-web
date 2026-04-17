@@ -25,6 +25,7 @@ import {
 } from '@/lib/guards';
 import { destroySession, hasSession } from '@/lib/session';
 import type { RoleDetail, RoleListItem } from '@/lib/types';
+import type { SearchItem } from '@/components/common/global-search';
 
 export default function AdminRolesPage() {
   const router = useRouter();
@@ -92,6 +93,31 @@ export default function AdminRolesPage() {
       totalPermissions: permissions?.total || 0,
     }),
     [permissions?.total, roles?.total],
+  );
+
+  // 配置角色搜索项
+  const handleSearch = useMemo(
+    () => async (query: string): Promise<SearchItem[]> => {
+      try {
+        const response = await apiRequest<{
+          items: RoleListItem[];
+        }>(`/api/roles?search=${encodeURIComponent(query)}&limit=20`);
+
+        return response.data.items.map((role) => ({
+          id: `role-${role.id}`,
+          label: role.name,
+          value: role.name,
+          group: '角色列表',
+          onSelect: () => {
+            void handleRoleEdit(role);
+          },
+        }));
+      } catch (error) {
+        console.error('搜索角色失败:', error);
+        return [];
+      }
+    },
+    [],
   );
 
   async function handleRoleEdit(role: RoleListItem) {
@@ -286,7 +312,7 @@ export default function AdminRolesPage() {
   }
 
   return (
-    <AppShell navItems={navItems}>
+    <AppShell navItems={navItems} onSearch={handleSearch}>
       <div className="space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>

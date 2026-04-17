@@ -27,6 +27,7 @@ import {
 } from '@/lib/guards';
 import { destroySession, hasSession } from '@/lib/session';
 import type { RoleListItem, UserDetail, UserListItem } from '@/lib/types';
+import type { SearchItem } from '@/components/common/global-search';
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -89,6 +90,31 @@ export default function AdminUsersPage() {
       totalPermissions: 0,
     }),
     [users?.total],
+  );
+
+  // 配置用户搜索项
+  const handleSearch = useMemo(
+    () => async (query: string): Promise<SearchItem[]> => {
+      try {
+        const response = await apiRequest<{
+          items: UserListItem[];
+        }>(`/api/users?search=${encodeURIComponent(query)}&limit=20`);
+
+        return response.data.items.map((user) => ({
+          id: `user-${user.id}`,
+          label: user.email,
+          value: user.email,
+          group: '用户列表',
+          onSelect: () => {
+            void handleUserRolesEdit(user);
+          },
+        }));
+      } catch (error) {
+        console.error('搜索用户失败:', error);
+        return [];
+      }
+    },
+    [],
   );
 
   async function handleToggleUserStatus(user: UserListItem) {
@@ -250,7 +276,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <AppShell navItems={navItems}>
+    <AppShell navItems={navItems} onSearch={handleSearch}>
       <div className="space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
