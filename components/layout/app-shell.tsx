@@ -100,7 +100,7 @@ export function AppShell({
             }}
           >
             {navIcons[item.href]}
-            {collapsed ? null : <span className="truncate">{item.label}</span>}
+            {collapsed ? null : <span className="truncate text-xs">{item.label}</span>}
           </Link>
         </Button>
       );
@@ -110,16 +110,16 @@ export function AppShell({
   return (
     <div
       className={cn(
-        'flex min-h-screen flex-col bg-background text-foreground lg:h-screen lg:overflow-hidden lg:grid',
+        'flex min-h-screen flex-col bg-background text-foreground transition-[grid-template-columns] duration-200 ease-out lg:h-screen lg:overflow-hidden lg:grid',
         sidebarCollapsed
           ? 'lg:grid-cols-[77px_minmax(0,1fr)]'
           : 'lg:grid-cols-[220px_minmax(0,1fr)]',
       )}
     >
-      <aside className="hidden shrink-0 flex-col overflow-hidden border-r border-border bg-card lg:flex lg:h-screen">
+      <aside className="hidden shrink-0 flex-col overflow-hidden border-r border-border bg-card transition-[width] duration-200 ease-out lg:flex lg:h-screen">
         <div
           className={cn(
-            'flex h-[77px] shrink-0 items-center border-b border-border py-5',
+            'flex h-[77px] shrink-0 items-center border-b border-border py-5 transition-[padding] duration-200 ease-out',
             sidebarCollapsed ? 'justify-center px-3' : 'justify-between px-6',
           )}
         >
@@ -161,7 +161,7 @@ export function AppShell({
         </ScrollArea>
       </aside>
       <Dialog open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
-        <DialogContent className="left-0 top-0 h-screen w-[280px] max-w-[80vw] translate-x-0 translate-y-0 gap-0 border-r p-0 sm:max-w-[80vw] lg:hidden">
+        <DialogContent className="left-0 top-0 h-screen w-[280px] max-w-[80vw] translate-x-0 translate-y-0 gap-0 border-r p-0 data-[state=closed]:slide-out-to-left-1 data-[state=open]:slide-in-from-left-1 sm:max-w-[80vw] lg:hidden">
           <DialogTitle className="sr-only">导航菜单</DialogTitle>
           <DialogDescription className="sr-only">
             选择要进入的后台页面。

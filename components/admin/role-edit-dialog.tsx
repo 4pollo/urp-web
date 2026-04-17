@@ -21,6 +21,7 @@ import { Label } from '../ui/label';
 import { ScrollArea } from '../ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Textarea } from '../ui/textarea';
+import { cn } from '@/lib/utils';
 
 export function RoleEditDialog({
   role,
@@ -352,69 +353,78 @@ export function RoleEditDialog({
                                           {selectedCount} / {items.length}
                                         </Badge>
                                         {groupExpanded ? (
-                                          <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                                          <ChevronUp className="h-4 w-4 text-muted-foreground transition-transform duration-200 ease-out" />
                                         ) : (
-                                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 ease-out" />
                                         )}
                                       </div>
                                     </button>
                                   </div>
                                 </CardHeader>
-                                {groupExpanded ? (
-                                  <CardContent>
-                                    <div className="grid gap-3 md:grid-cols-3">
-                                      {items.map((permission) => {
-                                        const checked =
-                                          selectedPermissionIds.includes(
-                                            permission.id,
-                                          );
-                                        const primaryLabel =
-                                          permission.description ||
-                                          permission.key;
+                                <div
+                                  className={cn(
+                                    'grid transition-[grid-template-rows,opacity] duration-200 ease-out',
+                                    groupExpanded
+                                      ? 'grid-rows-[1fr] opacity-100'
+                                      : 'grid-rows-[0fr] opacity-0',
+                                  )}
+                                >
+                                  <div className="overflow-hidden">
+                                    <CardContent>
+                                      <div className="grid gap-3 md:grid-cols-3">
+                                        {items.map((permission) => {
+                                          const checked =
+                                            selectedPermissionIds.includes(
+                                              permission.id,
+                                            );
+                                          const primaryLabel =
+                                            permission.description ||
+                                            permission.key;
 
-                                        return (
-                                          <div
-                                            key={permission.id}
-                                            className="border border-border bg-background"
-                                          >
-                                            <div className="flex items-start gap-3 p-3">
-                                              <div className="pt-0.5">
-                                                <Checkbox
-                                                  id={`permission-${permission.id}`}
-                                                  checked={checked}
-                                                  disabled={
-                                                    permissionPending ||
-                                                    detailLoading ||
-                                                    roleLocked
-                                                  }
-                                                  onCheckedChange={(value) =>
-                                                    handlePermissionToggle(
-                                                      permission.id,
-                                                      value === true,
-                                                    )
-                                                  }
-                                                />
-                                              </div>
-                                              <div className="min-w-0 flex-1 space-y-1">
-                                                <Label
-                                                  htmlFor={`permission-${permission.id}`}
-                                                  className="block space-y-1 text-sm"
-                                                >
-                                                  <span className="block font-medium text-foreground">
-                                                    {primaryLabel}
-                                                  </span>
-                                                  <span className="block text-xs text-muted-foreground">
-                                                    {permission.key}
-                                                  </span>
-                                                </Label>
+                                          return (
+                                            <div
+                                              key={permission.id}
+                                              className="border border-border bg-background"
+                                            >
+                                              <div className="flex items-start gap-3 p-3">
+                                                <div className="pt-0.5">
+                                                  <Checkbox
+                                                    id={`permission-${permission.id}`}
+                                                    checked={checked}
+                                                    disabled={
+                                                      permissionPending ||
+                                                      detailLoading ||
+                                                      roleLocked
+                                                    }
+                                                    onCheckedChange={(value) =>
+                                                      handlePermissionToggle(
+                                                        permission.id,
+                                                        value === true,
+                                                      )
+                                                    }
+                                                  />
+                                                </div>
+                                                <div className="min-w-0 flex-1 space-y-1">
+                                                  <Label
+                                                    htmlFor={`permission-${permission.id}`}
+                                                    className="block space-y-1 text-sm"
+                                                  >
+                                                    <span className="block font-medium text-foreground">
+                                                      {primaryLabel}
+                                                    </span>
+                                                    <span className="block text-xs text-muted-foreground">
+                                                      {permission.key}
+                                                    </span>
+                                                  </Label>
+                                                </div>
                                               </div>
                                             </div>
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                  </CardContent>
-                                ) : null}
+                                          );
+                                        })}
+                                      </div>
+                                    </CardContent>
+                                  </div>
+                                </div>
                               </Card>
                             );
                           })}
